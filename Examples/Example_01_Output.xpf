@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xpif SYSTEM "xpif-v02082.dtd">
+<xpif version="1.0" xml:lang="en-US" cpss-version="2.07">
+  <xpif-operation-attributes>
+    <job-name syntax="name" xml:space="preserve">Example 01 Ticket</job-name>
+    <requesting-user-name syntax="name" xml:space="preserve">Jane Doe</requesting-user-name>
+  </xpif-operation-attributes>
+  <job-template-attributes>
+    <copies syntax="integer">5</copies>
+    <sides syntax="keyword">two-sided-long-edge</sides>
+    <media-col syntax="collection">
+      <media-hole-count syntax="integer">0</media-hole-count>
+    </media-col>
+  </job-template-attributes>
+</xpif>
