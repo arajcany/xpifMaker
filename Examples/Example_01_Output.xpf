@@ -10,6 +10,13 @@
     <sides syntax="keyword">two-sided-long-edge</sides>
     <media-col syntax="collection">
       <media-hole-count syntax="integer">0</media-hole-count>
+      <media-weight-metric syntax="integer">0</media-weight-metric>
     </media-col>
+    <cover-front syntax="collection">
+      <cover-type syntax="keyword">print-both</cover-type>
+    </cover-front>
+    <cover-back syntax="collection">
+      <cover-type syntax="keyword">print-both</cover-type>
+    </cover-back>
   </job-template-attributes>
 </xpif>

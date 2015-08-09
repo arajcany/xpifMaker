@@ -27,7 +27,8 @@
 /**
  * xpifMaker Creates a "Xerox Printing Instruction Format" ticket
  *
- * @author amdrew.rajcany@aus.fujixerox.com
+ * @author arajcany
+ * @version 0.01
  */
 class xpifMaker {
 
@@ -37,8 +38,6 @@ class xpifMaker {
     private $imp = '';                              //variable for the DOMImplementation
     private $dtd = '';                              //variable for the DOMDocumentType 
     private $xml = '';                              //variable for the DOMDocument
-    //XPIF properties file
-    private $textfile_ticket = '';                  //(string) valid filepath of textfile
     //XPIF properties
     private $copies = '';                           //(int)
     private $page_ranges = '';                      //(string) number range (e.g. '1-5' is 1,2,3,4,5) || (e.g. '' is all pages)
@@ -76,9 +75,11 @@ class xpifMaker {
     private $inserts = array();                     //(array)
     private $inserts_clean = array();               //(array)
     private $inserts_clean_structure = array();     //(array)
+    private $covers = array();                      //(array)
+    private $covers_clean = array();                //(array)
+    private $covers_clean_structure = array();      //(array)
 
     /**
-     * 
      * Constructor
      * 
      * Set default properties and create the DOMDocument
@@ -138,6 +139,22 @@ class xpifMaker {
             'media_weight_metric' => '',
         );
 
+        //structure of the covers
+        $this->covers_clean_structure = array(
+            'type' => '',
+            'sides' => '',
+            'media_key' => '',
+            'media_size' => '',
+            'media_x_dimension' => '',
+            'media_y_dimension' => '',
+            'media_hole_count' => '',
+            'media_color' => '',
+            'media_front_coating' => '',
+            'media_back_coating' => '',
+            'media_type' => '',
+            'media_weight_metric' => '',
+        );
+
         return true;
     }
 
@@ -162,7 +179,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * inflectSize
      * 
      * Return the physical size in mm from keyword size.
@@ -210,6 +226,17 @@ class xpifMaker {
         }
     }
 
+    /**
+     * inflectPlex
+     * 
+     * Return the XPIF compliant plex syntax from a common string.
+     *    'one-sided'
+     *    'two-sided-long-edge'
+     *    'two-sided-short-edge'
+     * 
+     * @param string $size
+     * @return mixed  
+     */
     private function inflectPlex($plex = NULL) {
         if ($plex == NULL) {
             return false;
@@ -245,10 +272,9 @@ class xpifMaker {
     }
 
     /**
-     * 
      * addException
      * 
-     * Add an exception page into the XPIF ticket
+     * Add an exception page into the XPIF ticket.
      * 
      * @param array $expArray
      * @return boolean
@@ -270,7 +296,7 @@ class xpifMaker {
     /**
      * addInsert
      * 
-     * Add an insert page into the XPIF ticket
+     * Add an insert page into the XPIF ticket.
      * 
      * @param array $insArray
      * @return boolean
@@ -290,7 +316,28 @@ class xpifMaker {
     }
 
     /**
+     * addCover
      * 
+     * Add an cover page into the XPIF ticket.
+     * 
+     * @param array $cvArray
+     * @return boolean
+     */
+    public function addCover($cvArray = NULL) {
+        if ($cvArray == NULL) {
+            return false;
+        } elseif (!is_array($cvArray)) {
+            return false;
+        }
+
+        //make sure the any missing keys are added
+        $cvArray = array_merge($this->covers_clean_structure, $cvArray);
+
+        $this->covers[] = $cvArray;
+        return true;
+    }
+
+    /**
      * rangeExpand
      * 
      * Expand a page range string to comma delimited string.
@@ -439,7 +486,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * beforeRender
      * 
      * Called directly before the XPIF has been rendered. Mainly used to format
@@ -506,6 +552,17 @@ class xpifMaker {
         }
         if ($this->main_media_clean['media_weight_metric'] == 0) {
             $this->main_media_clean['media_weight_metric'] = '';
+        }
+
+        //format the covers
+        $counter = 0;
+        $this->covers_clean = array('front' => [], 'back' => []);
+        foreach ($this->covers as $cover) {
+            if ($cover['type'] == 'front') {
+                $this->covers_clean['front'] = $cover;
+            } elseif ($cover['type'] == 'back') {
+                $this->covers_clean['back'] = $cover;
+            }
         }
 
         //format the exceptions
@@ -603,7 +660,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * afterRender
      * 
      * Called directly after the XPIF has been rendered. Mainly used to format
@@ -631,7 +687,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * renderTicket
      * 
      * Render ticket and return an XML string.
@@ -685,7 +740,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createXpifOperationAttributesNode
      * 
      * Creates a DOMNode for XPIF 'xpif-operation-attributes' elements
@@ -717,7 +771,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createJobTemplateAttributesNode
      * 
      * Creates a DOMNode for XPIF 'job-template-attributes' elements
@@ -777,6 +830,12 @@ class xpifMaker {
         $mainMediaColNode = $this->createMediaColNode($this->main_media_clean);
         $mainMediaColNode = $jta->importNode($mainMediaColNode, true);
 
+        //create cover-front and cover-back nodes
+        $coverFrontNode = $this->createCoverNode('front');
+        $coverFrontNode = $jta->importNode($coverFrontNode, true);
+        $coverBackNode = $this->createCoverNode('back');
+        $coverBackNode = $jta->importNode($coverBackNode, true);
+
         //create page-overrides node
         $pageOverridesNode = $this->createPageOverridesNode();
         $pageOverridesNode = $jta->importNode($pageOverridesNode, true);
@@ -803,6 +862,8 @@ class xpifMaker {
         $job_template_attributes->appendChild($x_side2_image_shift);
         $job_template_attributes->appendChild($y_side2_image_shift);
         $job_template_attributes->appendChild($mainMediaColNode);
+        $job_template_attributes->appendChild($coverFrontNode);
+        $job_template_attributes->appendChild($coverBackNode);
         $job_template_attributes->appendChild($pageOverridesNode);
         $job_template_attributes->appendChild($insertSheetNode);
         $jta->appendChild($job_template_attributes);
@@ -812,7 +873,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createPageOverridesNode
      * 
      * Creates a DOMNode for XPIF 'page-overrides' element.
@@ -857,7 +917,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createInsertSheetsNode
      * 
      * Creates a DOMNode for XPIF 'insert-sheet' element.
@@ -867,8 +926,8 @@ class xpifMaker {
     private function createInsertSheetsNode() {
         $is = new DOMDocument;
 
-        $ranges = $is->createElement('insert-sheet');
-        $ranges->setAttribute("syntax", "1setOf");
+        $insert_sheet = $is->createElement('insert-sheet');
+        $insert_sheet->setAttribute("syntax", "1setOf");
 
         foreach ($this->inserts_clean as $insertClean) {
             $value = $is->createElement("value");
@@ -890,18 +949,68 @@ class xpifMaker {
             $value->appendChild($insert_after_page_number);
             $value->appendChild($insert_count);
             $value->appendChild($insertMediaColNode);
-            $ranges->appendChild($value);
+            $insert_sheet->appendChild($value);
         }
 
         //append
-        $is->appendChild($ranges);
+        $is->appendChild($insert_sheet);
 
         //return a DOMNode for the insert-sheet
         return $is->getElementsByTagName('insert-sheet')->item(0);
     }
 
     /**
+     * createCoverNode
      * 
+     * Create and XPIF cover element (front or back);
+     * 
+     * @param string $type
+     * @param string $sides
+     * @return DOMNode
+     */
+    private function createCoverNode($type = NULL, $sides = NULL) {
+        $cv = new DOMDocument;
+
+        if ($type == 'front') {
+            $cover_type_string = 'cover-front';
+        } elseif ($type == 'back') {
+            $cover_type_string = 'cover-back';
+        } else {
+            //return empty DOMNode
+            $empty = $cv->createElement("cover-none", "");
+            $cv->appendChild($empty);
+            return $cv->getElementsByTagName('cover-none')->item(0);
+        }
+
+        if ($sides == 'front') {
+            $print_sides_string = 'print-front';
+        } elseif ($sides == 'back') {
+            $print_sides_string = 'print-back';
+        } else {
+            $print_sides_string = 'print-both';
+        }
+
+        $cover_front_or_back = $cv->createElement($cover_type_string);
+        $cover_front_or_back->setAttribute("syntax", "collection");
+
+        $cover_type = $cv->createElement("cover-type", $print_sides_string);
+        $cover_type->setAttribute("syntax", "keyword");
+
+        //create media-col node
+        $coverMediaColNode = $this->createMediaColNode($this->covers_clean[$type]);
+        $coverMediaColNode = $cv->importNode($coverMediaColNode, true);
+
+        //append
+        $cover_front_or_back->appendChild($coverMediaColNode);
+        $cover_front_or_back->appendChild($cover_type);
+
+        $cv->appendChild($cover_front_or_back);
+
+        //return a DOMNode for the cover
+        return $cv->getElementsByTagName($cover_type_string)->item(0);
+    }
+
+    /**
      * createMediaColNode
      * 
      * Creates a XPIF media collection.
@@ -946,7 +1055,7 @@ class xpifMaker {
             $media_col->appendChild($media_size);
         }
         if (isset($collection["media_hole_count"])) {
-            $media_hole_count = $mc->createElement("media-hole-count", $collection["media_hole_count"]);
+            $media_hole_count = $mc->createElement("media-hole-count", 1 * $collection["media_hole_count"]);
             $media_hole_count->setAttribute("syntax", "integer");
             $media_col->appendChild($media_hole_count);
         }
@@ -971,7 +1080,7 @@ class xpifMaker {
             $media_col->appendChild($media_type);
         }
         if (isset($collection["media_weight_metric"])) {
-            $media_weight_metric = $mc->createElement("media-weight-metric", $collection["media_weight_metric"]);
+            $media_weight_metric = $mc->createElement("media-weight-metric", 1 * $collection["media_weight_metric"]);
             $media_weight_metric->setAttribute("syntax", "integer");
             $media_col->appendChild($media_weight_metric);
         }
@@ -984,7 +1093,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createPageRangesNode
      * 
      * Wrapper function for xpifMaker::createRangeNode.
@@ -998,7 +1106,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createPagesNode
      * 
      * Wrapper function for xpifMaker::createRangeNode.
@@ -1012,7 +1119,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createInputDocumentsNode
      * 
      * Wrapper function for xpifMaker::createRangeNode.
@@ -1029,7 +1135,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createRangeNode
      * 
      * Creates a DOMNode for XPIF 'upper' and 'lower' bound elements
@@ -1084,7 +1189,6 @@ class xpifMaker {
     }
 
     /**
-     * 
      * createFinishingsNode
      * 
      * Creates a DOMNode for XPIF 'finishings' elements

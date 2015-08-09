@@ -16,9 +16,22 @@
  include a new line</job-message-to-operator>
     <copies syntax="integer">5</copies>
     <sides syntax="keyword">two-sided-long-edge</sides>
+    <x-side1-image-shift syntax="integer">1000</x-side1-image-shift>
+    <y-side1-image-shift syntax="integer">1000</y-side1-image-shift>
+    <x-side2-image-shift syntax="integer">1000</x-side2-image-shift>
+    <y-side2-image-shift syntax="integer">1000</y-side2-image-shift>
     <media-col syntax="collection">
+      <media-key syntax="name" xml:space="preserve">plain-white-a4</media-key>
+      <media-size syntax="collection">
+        <x-dimension syntax="integer">32000</x-dimension>
+        <y-dimension syntax="integer">45000</y-dimension>
+      </media-size>
       <media-hole-count syntax="integer">0</media-hole-count>
-      <media-weight-metric syntax="integer">0</media-weight-metric>
+      <media-color syntax="keyword">white</media-color>
+      <media-front-coating syntax="keyword">uncoated</media-front-coating>
+      <media-back-coating syntax="keyword">uncoated</media-back-coating>
+      <media-type syntax="keyword">Stationery</media-type>
+      <media-weight-metric syntax="integer">80</media-weight-metric>
     </media-col>
     <cover-front syntax="collection">
       <cover-type syntax="keyword">print-both</cover-type>

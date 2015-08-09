@@ -37,9 +37,35 @@
       <media-weight-metric syntax="integer">80</media-weight-metric>
     </media-col>
     <cover-front syntax="collection">
+      <media-col syntax="collection">
+        <media-key syntax="name" xml:space="preserve">heavyweight-pink-a4</media-key>
+        <media-size syntax="collection">
+          <x-dimension syntax="integer">210</x-dimension>
+          <y-dimension syntax="integer">297</y-dimension>
+        </media-size>
+        <media-hole-count syntax="integer">0</media-hole-count>
+        <media-color syntax="keyword">pink</media-color>
+        <media-front-coating syntax="keyword">none</media-front-coating>
+        <media-back-coating syntax="keyword">none</media-back-coating>
+        <media-type syntax="keyword">stationery</media-type>
+        <media-weight-metric syntax="integer">200</media-weight-metric>
+      </media-col>
       <cover-type syntax="keyword">print-both</cover-type>
     </cover-front>
     <cover-back syntax="collection">
+      <media-col syntax="collection">
+        <media-key syntax="name" xml:space="preserve">heavyweight-pink-a4</media-key>
+        <media-size syntax="collection">
+          <x-dimension syntax="integer">210</x-dimension>
+          <y-dimension syntax="integer">297</y-dimension>
+        </media-size>
+        <media-hole-count syntax="integer">0</media-hole-count>
+        <media-color syntax="keyword">pink</media-color>
+        <media-front-coating syntax="keyword">none</media-front-coating>
+        <media-back-coating syntax="keyword">none</media-back-coating>
+        <media-type syntax="keyword">stationery</media-type>
+        <media-weight-metric syntax="integer">200</media-weight-metric>
+      </media-col>
       <cover-type syntax="keyword">print-both</cover-type>
     </cover-back>
     <page-overrides syntax="1setOf">

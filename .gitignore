@@ -4,9 +4,7 @@
 /InProgress
 
 # Ignore in general
-test.php
-index.php
-index2.php
+/test.php
 
 
 # Windows image file caches
