@@ -398,7 +398,7 @@ class xpifMaker {
      * Corrects overlapping page ranges.
      * e.g. '3,4,6,12,13,10-20,1,2,8' => '1-4,6,8,10-20'
      * 
-     * If $duplicateStringSingles==true then the single pages will display as
+     * If $duplicateStringSingles==true then single pages will display as
      * a range.
      * e.g. '3,4,6,12,13,10-20,1,2,8' => '1-4,6-6,8-8,10-20'
      * 
@@ -514,7 +514,7 @@ class xpifMaker {
         $this->main_media_clean['x_side2_image_shift'] = 100 * $this->x_side2_image_shift;
         $this->main_media_clean['y_side2_image_shift'] = 100 * $this->y_side2_image_shift;
 
-        //calculate inflected media dimesions
+        //calculate inflected media dimensions
         $media_size_inflected = $this->inflectSize($this->main_media_clean['media_size']);
         if ($media_size_inflected) {
             $media_size_inflected_x = 100 * $media_size_inflected[0];
@@ -554,7 +554,7 @@ class xpifMaker {
             $this->main_media_clean['media_weight_metric'] = '';
         }
 
-        //format the covers
+        //format the covers - will only keep the last 'front' and 'back' cover
         $counter = 0;
         $this->covers_clean = array('front' => [], 'back' => []);
         foreach ($this->covers as $cover) {
@@ -572,7 +572,7 @@ class xpifMaker {
             $exceptionRanges = $this->rangeCompact($exception["range"]);
             foreach ($exceptionRanges as $exceptionRange) {
 
-                //import the structure and merge in the exisiting properties
+                //import the structure and merge in the existing properties
                 $this->exceptions_clean[$counter] = array_merge($this->exceptions_clean_structure, $exception);
 
                 //add in the lower and upper bound
@@ -618,7 +618,7 @@ class xpifMaker {
 
             foreach ($insertRanges as $insertRange) {
 
-                //import the structure and merge in the exisiting properties
+                //import the structure and merge in the existing properties
                 $this->inserts_clean[$counter] = array_merge($this->inserts_clean_structure, $insert);
 
                 //redefine the range
@@ -690,8 +690,8 @@ class xpifMaker {
      * renderTicket
      * 
      * Render ticket and return an XML string.
-     * If $outputLocation is defined and valid, an XPIF tickect will be written
-     * to the filesystem.
+     * If $outputLocation is defined and valid, an XPIF ticket will be written
+     * to the file system.
      * 
      * @param string $outputLocation
      * @return string
@@ -1014,7 +1014,7 @@ class xpifMaker {
      * createMediaColNode
      * 
      * Creates a XPIF media collection.
-     * Pass in an arroy with the following keys:
+     * Pass in an array with the following keys:
      *  media_key
      *  media_x_dimension
      *  media_y_dimension

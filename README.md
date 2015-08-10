@@ -1,8 +1,8 @@
 # xpifMaker
-Create "Xerox Printing Instruction Format" tickets for Xerox Print Production Devices
+Create "Xerox Printing Instruction Format" tickets for Xerox print production devices
 
 ### Usage
-For complete examples, see the examples folder.
+For complete examples, see the 'Examples' folder.
 
 Basic Ticket:
 ```php
@@ -28,6 +28,7 @@ $xml_string = $xpfObject->renderTicket('C:\tmp\basic_ticket.xpf');
 echo $xml_string;
 ```
 
+
 Advanced Example:
 ```php
 //include the xpifMaker Class file
@@ -46,7 +47,7 @@ $xpfObject->setProperty("copies", 3);
 $xpfObject->setProperty("sides", "1");
 
 //media properties
-$xpfObject->setProperty("main_media_key", "plain-white-a4");
+$xpfObject->setProperty("main_media_key", "plain-white-sra3");
 $xpfObject->setProperty("main_media_size", "SRA3");
 //$xpfObject->setProperty("main_media_x_dimension", "210"); //will overwrite "SRA3"
 //$xpfObject->setProperty("main_media_y_dimension", "297"); //will overwrite "SRA3"
@@ -92,7 +93,7 @@ $in = array(
 $xpfObject->addInsert($in);
 
 //render the XPIF Ticket
-$xml_string = $xpfObject->renderTicket('C:\tmp\basic_ticket.xpf');
+$xml_string = $xpfObject->renderTicket('C:\tmp\advanced_ticket.xpf');
 
 //echo XPIF Ticket to screen
 echo $xml_string;
