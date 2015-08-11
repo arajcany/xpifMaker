@@ -550,19 +550,60 @@ class xpifMaker {
         if ($this->main_media_clean['y_side2_image_shift'] == 0) {
             $this->main_media_clean['y_side2_image_shift'] = '';
         }
+
+        //media weight
         if ($this->main_media_clean['media_weight_metric'] == 0) {
             $this->main_media_clean['media_weight_metric'] = '';
+        }
+
+        //media hole count
+        if ($this->main_media_clean['media_hole_count'] == 0) {
+            $this->main_media_clean['media_hole_count'] = '';
         }
 
         //format the covers - will only keep the last 'front' and 'back' cover
         $counter = 0;
         $this->covers_clean = array('front' => [], 'back' => []);
         foreach ($this->covers as $cover) {
+
+            //format numbers for 100x precision
+            if (isset($cover['media_x_dimension'])) {
+                $cover['media_x_dimension'] = 100 * $cover['media_x_dimension'];
+                if ($cover['media_x_dimension'] == 0) {
+                    $cover['media_x_dimension'] = '';
+                }
+            }
+            if (isset($cover['media_y_dimension'])) {
+                $cover['media_y_dimension'] = 100 * $cover['media_y_dimension'];
+                if ($cover['media_y_dimension'] == 0) {
+                    $cover['media_y_dimension'] = '';
+                }
+            }
+
+            //make sure media_weight_metric is an integer
+            if (isset($cover['media_weight_metric'])) {
+                $cover['media_weight_metric'] = 1 * $cover['media_weight_metric'];
+                if ($cover['media_weight_metric'] == 0) {
+                    $cover['media_weight_metric'] = '';
+                }
+            }
+
+            //make sure media_hole_count is an integer
+            if (isset($cover['media_hole_count'])) {
+                $cover['media_hole_count'] = 1 * $cover['media_hole_count'];
+                if ($cover['media_hole_count'] == 0) {
+                    $cover['media_hole_count'] = '';
+                }
+            }
+
+            //add to Class property
             if ($cover['type'] == 'front') {
                 $this->covers_clean['front'] = $cover;
             } elseif ($cover['type'] == 'back') {
                 $this->covers_clean['back'] = $cover;
             }
+
+            //print_r($this->covers_clean);
         }
 
         //format the exceptions
@@ -603,6 +644,9 @@ class xpifMaker {
                 //make sure media_hole_count is an integer
                 if (isset($this->exceptions_clean[$counter]['media_hole_count'])) {
                     $this->exceptions_clean[$counter]['media_hole_count'] = 1 * $this->exceptions_clean[$counter]['media_hole_count'];
+                    if ($this->exceptions_clean[$counter]['media_hole_count'] == 0) {
+                        $this->exceptions_clean[$counter]['media_hole_count'] = '';
+                    }
                 }
 
                 $counter++;
@@ -649,6 +693,9 @@ class xpifMaker {
                 //make sure media_hole_count is an integer
                 if (isset($this->inserts_clean[$counter]['media_hole_count'])) {
                     $this->inserts_clean[$counter]['media_hole_count'] = 1 * $this->inserts_clean[$counter]['media_hole_count'];
+                    if ($this->inserts_clean[$counter]['media_hole_count'] == 0) {
+                        $this->inserts_clean[$counter]['media_hole_count'] = '';
+                    }
                 }
 
 
@@ -968,9 +1015,10 @@ class xpifMaker {
      * @param string $sides
      * @return DOMNode
      */
-    private function createCoverNode($type = NULL, $sides = NULL) {
+    private function createCoverNode($type = NULL) {
         $cv = new DOMDocument;
-
+           
+        //wrong $type passsed in 
         if ($type == 'front') {
             $cover_type_string = 'cover-front';
         } elseif ($type == 'back') {
@@ -982,12 +1030,25 @@ class xpifMaker {
             return $cv->getElementsByTagName('cover-none')->item(0);
         }
 
+        //empty Property
+        if (empty($this->covers_clean[$type])) {
+            //return empty DOMNode
+            $empty = $cv->createElement("cover-none", "");
+            $cv->appendChild($empty);
+            return $cv->getElementsByTagName('cover-none')->item(0);
+        }
+
+        $sides = $this->covers_clean[$type]['sides'];
         if ($sides == 'front') {
             $print_sides_string = 'print-front';
         } elseif ($sides == 'back') {
             $print_sides_string = 'print-back';
-        } else {
+        } elseif ($sides == 'both') {
             $print_sides_string = 'print-both';
+        } elseif ($sides == 'all') {
+            $print_sides_string = 'print-both';
+        } else {
+            $print_sides_string = '';
         }
 
         $cover_front_or_back = $cv->createElement($cover_type_string);
@@ -1055,7 +1116,7 @@ class xpifMaker {
             $media_col->appendChild($media_size);
         }
         if (isset($collection["media_hole_count"])) {
-            $media_hole_count = $mc->createElement("media-hole-count", 1 * $collection["media_hole_count"]);
+            $media_hole_count = $mc->createElement("media-hole-count", $collection["media_hole_count"]);
             $media_hole_count->setAttribute("syntax", "integer");
             $media_col->appendChild($media_hole_count);
         }
@@ -1080,7 +1141,7 @@ class xpifMaker {
             $media_col->appendChild($media_type);
         }
         if (isset($collection["media_weight_metric"])) {
-            $media_weight_metric = $mc->createElement("media-weight-metric", 1 * $collection["media_weight_metric"]);
+            $media_weight_metric = $mc->createElement("media-weight-metric", $collection["media_weight_metric"]);
             $media_weight_metric->setAttribute("syntax", "integer");
             $media_col->appendChild($media_weight_metric);
         }

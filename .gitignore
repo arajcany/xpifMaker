@@ -4,7 +4,7 @@
 /InProgress
 
 # Ignore in general
-/test.php
+/test*.php
 
 
 # Windows image file caches
@@ -50,5 +50,4 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-
 
