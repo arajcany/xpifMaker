@@ -1,5 +1,5 @@
 # xpifMaker
-Create "Xerox Printing Instruction Format" tickets for Xerox print production devices
+A PHP Class for creating XPIF (Xerox Printing Instruction Format) tickets for Xerox print production devices.
 
 ### Usage
 For complete examples, see the 'Examples' folder.
