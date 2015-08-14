@@ -563,7 +563,7 @@ class xpifMaker {
 
         //format the covers - will only keep the last 'front' and 'back' cover
         $counter = 0;
-        $this->covers_clean = array('front' => [], 'back' => []);
+        $this->covers_clean = array('front' => array(), 'back' => array());
         foreach ($this->covers as $cover) {
 
             //format numbers for 100x precision
