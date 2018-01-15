@@ -280,7 +280,7 @@ class xpifMaker {
      * @return boolean
      */
     public function addException($expArray = NULL) {
-        if ($expArray == NULL) {
+        if ($expArray === NULL) {
             return false;
         } elseif (!is_array($expArray)) {
             return false;
