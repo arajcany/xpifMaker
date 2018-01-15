@@ -350,7 +350,7 @@ class xpifMaker {
      * @return mixed 
      */
     public function rangeExpand($r = NULL, $returnFormat = 'array') {
-        if ($r == NULL) {
+        if ($r === NULL) {
             return false;
         }
 
