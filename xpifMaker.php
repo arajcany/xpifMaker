@@ -657,6 +657,8 @@ class xpifMaker {
         $counter = 0;
         $this->inserts_clean = array();
         foreach ($this->inserts as $insert) {
+            
+            
 
             $insertRanges = $this->rangeExpand($insert["range"]); //print_r($insertRanges);
 
@@ -949,10 +951,15 @@ class xpifMaker {
             $exceptionMediaColNode = $this->createMediaColNode($exceptionClean);
             $exceptionMediaColNode = $po->importNode($exceptionMediaColNode, true);
 
+            //create sides element
+            $sidesElement = $po->createElement("sides", $exceptionClean['sides']);
+            $sidesElement->setAttribute("syntax", "keyword");
+
             //append
             $value->appendChild($inputDocumentsNode);
             $value->appendChild($pageRangesNode);
             $value->appendChild($exceptionMediaColNode);
+            $value->appendChild($sidesElement);
             $exceptions->appendChild($value);
         }
 
