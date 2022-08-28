@@ -1,3 +1,7 @@
+# NOTICE: 2022-08-28
+Moving this project to Archived status. If you need XPIF ticketing functionality, please refer to updated project arajcany/pre-press-tricks.
+https://github.com/arajcany/PrePressTricks
+
 # xpifMaker
 A PHP Class for creating XPIF (Xerox Printing Instruction Format) tickets for Xerox print production devices.
 
